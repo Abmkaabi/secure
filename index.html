@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شبكة التعليم | مهمة إنقاذ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
+
+:root{
+  --bg0:#05070d;--bg1:#0a0f1c;--bg2:#0d1526;
+  --panel:#0c1220;--panel2:#0f1830;
+  --maroon:#8a1538;--maroon2:#6b0f2b;--maroon3:#b03256;
+  --gold:#e8b04b;--gold2:#f2c369;
+  --green:#22c96f;--green-glow:rgba(34,201,111,.35);
+  --red:#ff3b5c;--red-glow:rgba(255,59,92,.35);
+  --cyan:#3fd4ec;
+  --ink:#f4efe4;--ink-dim:rgba(244,239,228,.56);--ink-dim2:rgba(244,239,228,.32);
+  --ring:rgba(232,176,75,.14);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  font-family:'Tajawal',sans-serif;background:var(--bg0);color:var(--ink);
+  min-height:100vh;overflow-x:hidden;position:relative;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 45% at 15% 8%, rgba(138,21,56,.28) 0%, transparent 62%),
+    radial-gradient(ellipse 55% 50% at 88% 92%, rgba(63,212,236,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 60% at 50% 50%, rgba(138,21,56,.10) 0%, transparent 70%),
+    linear-gradient(180deg,var(--bg0) 0%,var(--bg1) 45%,var(--bg2) 100%);
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(232,176,75,.025) 0px, rgba(232,176,75,.025) 1px, transparent 1px, transparent 46px),
+    repeating-linear-gradient(0deg, rgba(232,176,75,.025) 0px, rgba(232,176,75,.025) 1px, transparent 1px, transparent 46px);
+}
+.stars{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.star{position:absolute;border-radius:50%;background:var(--gold);opacity:.4;animation:twinkle 4s ease-in-out infinite;}
+@keyframes twinkle{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.6;transform:scale(1.4)}}
+
+/* ===== APP FRAME ===== */
+.app{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px;}
+.stage{width:100%;max-width:1180px;}
+
+/* ===== HEADER BAR ===== */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  background:linear-gradient(180deg,rgba(13,20,38,.92),rgba(8,12,22,.92));
+  border:1px solid rgba(232,176,75,.16);border-radius:20px;
+  padding:14px 22px;margin-bottom:22px;
+  box-shadow:0 18px 50px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.03);
+}
+.flag{width:70px;height:44px;border-radius:6px;overflow:hidden;flex-shrink:0;box-shadow:0 2px 10px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.08);}
+.flag svg{display:block;width:100%;height:100%;}
+.topbar-title{
+  font-size:clamp(18px,2.6vw,27px);font-weight:800;text-align:center;flex:1;
+  letter-spacing:.2px;
+}
+.status-pill{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+  border-radius:999px;padding:7px 16px;font-weight:800;font-size:12.5px;letter-spacing:.5px;
+}
+.status-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.status-dot.pulse{animation:dotpulse 1.6s ease-in-out infinite;}
+@keyframes dotpulse{0%,100%{box-shadow:0 0 0 0 currentColor}50%{box-shadow:0 0 0 6px transparent}}
+.st-online .status-dot{background:var(--green);color:var(--green);}
+.st-online{color:var(--green);}
+.st-offline .status-dot{background:var(--red);color:var(--red);}
+.st-offline{color:var(--red);}
+.st-action .status-dot{background:var(--gold);color:var(--gold);}
+.st-action{color:var(--gold);}
+.st-locked .status-dot{background:var(--gold);color:var(--gold);}
+.st-locked{color:var(--gold);}
+.st-secure .status-dot{background:var(--green);color:var(--green);}
+.st-secure{color:var(--green);}
+.st-2040 .status-dot{background:var(--cyan);color:var(--cyan);}
+.st-2040{color:var(--cyan);}
+
+/* ===== SCREENS ===== */
+.screen{display:none;}
+.screen.active{display:block;animation:screenIn .5s cubic-bezier(.22,.68,0,1.1) both;}
+@keyframes screenIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+.panel{
+  position:relative;overflow:hidden;
+  background:linear-gradient(160deg,rgba(13,20,38,.86),rgba(7,10,18,.92));
+  border-radius:26px;padding:56px 46px 46px;text-align:center;
+  box-shadow:0 30px 70px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.03);
+  min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+}
+.panel-ring{position:absolute;border-radius:50%;border:1px solid var(--ring);pointer-events:none;}
+.panel-ring.r1{width:230px;height:230px;top:-90px;left:6%;}
+.panel-ring.r2{width:230px;height:230px;top:-90px;right:6%;}
+.panel-ring.r3{width:170px;height:170px;bottom:-70px;left:12%;}
+.panel-ring.r4{width:170px;height:170px;bottom:-70px;right:12%;}
+
+.panel.tone-neutral{border:1px solid rgba(232,176,75,.22);}
+.panel.tone-red{border:1px solid rgba(255,59,92,.4);background:linear-gradient(160deg,rgba(50,8,18,.88),rgba(20,4,9,.94));}
+.panel.tone-green{border:1px solid rgba(34,201,111,.4);background:linear-gradient(160deg,rgba(6,32,22,.88),rgba(4,14,11,.94));}
+.panel.tone-gold{border:1px solid rgba(232,176,75,.4);}
+.panel.tone-cyan{border:1px solid rgba(63,212,236,.35);}
+
+.icon-badge{
+  width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  margin-bottom:22px;position:relative;z-index:1;
+}
+.icon-badge svg{width:48px;height:48px;}
+.icon-badge.i-green{background:rgba(34,201,111,.1);border:2px solid var(--green);box-shadow:0 0 40px var(--green-glow);}
+.icon-badge.i-red{background:rgba(255,59,92,.1);border:2px solid var(--red);box-shadow:0 0 40px var(--red-glow);animation:alarmPulse 1s ease-in-out infinite;}
+@keyframes alarmPulse{0%,100%{box-shadow:0 0 24px var(--red-glow)}50%{box-shadow:0 0 54px var(--red-glow)}}
+.icon-badge.i-cyan{background:rgba(63,212,236,.1);border:2px solid var(--cyan);box-shadow:0 0 40px rgba(63,212,236,.3);}
+
+.panel-title{font-size:clamp(24px,4vw,38px);font-weight:900;margin-bottom:10px;position:relative;z-index:1;}
+.panel-title.gold{color:var(--gold2);}
+.panel-title.white{color:var(--ink);}
+.panel-title.red{color:#ff8a9a;}
+.panel-sub{font-size:clamp(14px,1.8vw,17px);color:var(--ink-dim);margin-bottom:30px;position:relative;z-index:1;line-height:1.9;max-width:560px;}
+.panel-sub b{color:var(--ink);font-weight:800;}
+
+.footer-line{
+  margin-top:26px;font-size:13px;color:rgba(244,239,228,.42);position:relative;z-index:1;
+  display:flex;align-items:center;gap:10px;
+}
+.footer-line .dotsep{width:4px;height:4px;border-radius:50%;background:rgba(244,239,228,.32);}
+
+.btn{
+  position:relative;z-index:1;
+  font-family:'Tajawal',sans-serif;font-weight:800;font-size:16px;cursor:pointer;
+  border-radius:14px;padding:15px 36px;border:1px solid transparent;
+  transition:transform .22s,box-shadow .22s,background .22s,border-color .22s;
+}
+.btn:active{transform:translateY(1px) scale(.99);}
+.btn-main{
+  background:linear-gradient(135deg,#b03256,var(--maroon2));color:var(--gold2);
+  border:1px solid rgba(232,176,75,.35);box-shadow:0 12px 30px rgba(138,21,56,.45);
+}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 18px 40px rgba(138,21,56,.6);}
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold),#c8912f);color:#241505;
+  box-shadow:0 12px 30px rgba(232,176,75,.3);
+}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 18px 40px rgba(232,176,75,.45);}
+.btn-ghost{
+  background:rgba(255,255,255,.03);color:var(--ink-dim);border:1px solid rgba(255,255,255,.1);
+}
+.btn-ghost:hover{background:rgba(255,255,255,.06);color:var(--ink);}
+
+/* ===== OPTION CARD (mission / password) ===== */
+.mission-badge{
+  font-size:12px;font-weight:800;color:var(--gold2);letter-spacing:.5px;margin-bottom:8px;
+  position:relative;z-index:1;
+}
+.q-prompt{font-size:15px;color:var(--ink-dim);margin-bottom:30px;position:relative;z-index:1;}
+
+.opt-row{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1;width:100%;max-width:820px;}
+.opt-btn{
+  flex:1 1 260px;min-width:220px;max-width:360px;
+  background:rgba(255,255,255,.02);border:2px solid rgba(244,239,228,.16);
+  border-radius:16px;padding:24px 20px;color:var(--ink);
+  font-family:'Tajawal',sans-serif;font-size:19px;font-weight:700;cursor:pointer;
+  transition:all .22s;
+}
+.opt-btn:hover:not(:disabled){border-color:rgba(232,176,75,.5);background:rgba(232,176,75,.06);transform:translateY(-3px);}
+.opt-btn:disabled{cursor:default;}
+.opt-btn.hint-correct{border-color:rgba(34,201,111,.55);}
+.opt-btn.is-correct{background:rgba(34,201,111,.14);border-color:var(--green);box-shadow:0 0 30px var(--green-glow);}
+.opt-btn.is-wrong{background:rgba(255,59,92,.12);border-color:var(--red);}
+@keyframes shakeX{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.opt-btn.shaking{animation:shakeX .4s ease;}
+
+.pw-reveal{
+  margin-top:26px;font-size:15px;font-weight:700;color:var(--green);position:relative;z-index:1;
+  opacity:0;transform:translateY(6px);transition:opacity .5s,transform .5s;
+}
+.pw-reveal.show{opacity:1;transform:translateY(0);}
+
+.hint-msg{
+  margin-top:18px;font-size:14px;font-weight:700;min-height:20px;position:relative;z-index:1;
+}
+.hint-msg.err{color:#ff8a9a;}
+
+.next-wrap{margin-top:28px;position:relative;z-index:1;min-height:52px;}
+
+/* ===== NETWORK MAP ===== */
+.netmap{position:relative;width:100%;max-width:820px;height:400px;margin:6px auto 20px;z-index:1;}
+.net-line{position:absolute;background:rgba(244,239,228,.08);height:1px;transform-origin:0 0;z-index:0;}
+.node{
+  position:absolute;width:150px;height:150px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  border:2px solid var(--red);background:rgba(255,59,92,.06);
+  font-weight:800;font-size:17px;transition:all .6s cubic-bezier(.22,.68,0,1.15);
+  box-shadow:0 0 26px rgba(255,59,92,.18);
+}
+.node .dot{position:absolute;bottom:-14px;width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 10px var(--red);transition:background .5s,box-shadow .5s;}
+.node.connected{border-color:var(--green);background:rgba(34,201,111,.09);box-shadow:0 0 30px var(--green-glow);}
+.node.connected .dot{background:var(--green);box-shadow:0 0 10px var(--green);}
+.node.connected span{color:#a8ffcf;}
+@keyframes nodeSnap{0%{transform:scale(1)}30%{transform:scale(1.16)}60%{transform:scale(.94)}100%{transform:scale(1)}}
+.node.just-connected{animation:nodeSnap .55s cubic-bezier(.22,.68,0,1.4);}
+.n-school{top:0;right:8%;}
+.n-teacher{top:0;left:8%;}
+.n-student{top:130px;left:50%;transform:translateX(-50%);width:170px;height:170px;}
+.n-library{bottom:0;right:14%;}
+.n-lab{bottom:0;left:14%;}
+
+.net-counter{
+  position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;
+  background:rgba(232,176,75,.08);border:1px solid rgba(232,176,75,.3);
+  border-radius:999px;padding:6px 20px;font-weight:800;color:var(--gold2);font-size:14px;margin-bottom:6px;
+}
+
+.status-banner{
+  position:relative;z-index:1;margin-top:6px;
+  background:linear-gradient(160deg,rgba(138,21,56,.35),rgba(80,10,30,.4));
+  border-top:1px solid rgba(232,176,75,.2);
+  padding:16px 24px;border-radius:14px;font-weight:800;font-size:16px;color:var(--ink);
+  width:100%;max-width:640px;
+}
+.status-banner.ok{background:linear-gradient(160deg,rgba(20,90,55,.4),rgba(10,50,32,.45));color:#a8ffcf;}
+
+/* values recap */
+.values-recap{
+  display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:22px;position:relative;z-index:1;
+}
+.value-chip{
+  background:rgba(232,176,75,.08);border:1px solid rgba(232,176,75,.28);
+  border-radius:999px;padding:8px 18px;font-size:13.5px;font-weight:700;color:var(--gold2);
+}
+
+/* password screen 3-col */
+.opt-row.three .opt-btn{flex:1 1 200px;padding:22px 16px;font-size:17px;}
+
+/* confetti */
+#confetti{position:fixed;inset:0;z-index:50;pointer-events:none;}
+
+/* small screens */
+@media(max-width:760px){
+  .topbar{flex-wrap:wrap;padding:12px 16px;}
+  .topbar-title{order:3;width:100%;font-size:18px;margin-top:4px;}
+  .panel{padding:38px 20px 34px;min-height:auto;}
+  .netmap{height:auto;padding-bottom:170px;}
+  .n-school,.n-teacher,.n-student,.n-library,.n-lab{position:relative;top:auto;left:auto;right:auto;bottom:auto;transform:none;margin:8px auto;width:130px;height:130px;}
+  .netmap{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;}
+}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<canvas id="confetti"></canvas>
+
+<div class="app"><div class="stage">
+
+  <div class="topbar">
+    <div class="flag">
+      <svg viewBox="0 0 900 600" preserveAspectRatio="none">
+        <rect width="900" height="600" fill="#8A1538"/>
+        <polygon fill="#ffffff" points="0,0 255,0 285,33 255,67 285,100 255,133 285,167 255,200 285,233 255,267 285,300 255,333 285,367 255,400 285,433 255,467 285,500 255,533 285,567 255,600 0,600"/>
+      </svg>
+    </div>
+    <div class="topbar-title" id="topTitle">شبكة التعليم</div>
+    <div class="status-pill" id="topStatus"><span class="status-dot pulse"></span><span id="topStatusLabel">ONLINE</span></div>
+  </div>
+
+  <!-- 1. BOOT -->
+  <div class="screen active" id="scr-boot">
+    <div class="panel tone-neutral">
+      <div class="panel-ring r1"></div><div class="panel-ring r2"></div><div class="panel-ring r3"></div><div class="panel-ring r4"></div>
+      <div class="panel-title white">شبكة التعليم</div>
+      <div class="panel-sub" style="color:#a8ffcf;font-weight:700;">جميع الأنظمة تعمل بصورة طبيعية</div>
+      <button class="btn btn-main" onclick="goAlert()">بدء البث المباشر</button>
+      <div class="footer-line"><span>تعليم متصل</span><span class="dotsep"></span><span>وطن يتقدم</span></div>
+    </div>
+  </div>
+
+  <!-- 2. ALERT -->
+  <div class="screen" id="scr-alert">
+    <div class="panel tone-red">
+      <div class="panel-ring r1"></div><div class="panel-ring r2"></div><div class="panel-ring r3"></div><div class="panel-ring r4"></div>
+      <div class="icon-badge i-red">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ff3b5c" stroke-width="2"><path d="M12 2 22 20H2Z" stroke-linejoin="round"/><path d="M12 9v5" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="#ff3b5c" stroke="none"/></svg>
+      </div>
+      <div class="panel-title red">شبكة التعليم تتعرض لهجوم</div>
+      <div class="panel-sub">تم فقد الاتصال بالمدرسة والمكتبة والمختبر والمعلمة والطالبة</div>
+      <button class="btn btn-main" onclick="goStatus()">فحص الشبكة</button>
+    </div>
+  </div>
+
+  <!-- 3. NETWORK STATUS HUB -->
+  <div class="screen" id="scr-status">
+    <div class="panel tone-neutral" style="padding-top:40px;">
+      <div class="panel-ring r1"></div><div class="panel-ring r2"></div>
+      <div class="panel-title white" style="font-size:24px;margin-bottom:16px;">حالة شبكة التعليم</div>
+      <div class="net-counter" id="netCounter">0 / 5</div>
+      <div class="netmap" id="netmap">
+        <div class="node n-school" data-node="school"><span>المدرسة</span><div class="dot"></div></div>
+        <div class="node n-teacher" data-node="teacher"><span>المعلمة</span><div class="dot"></div></div>
+        <div class="node n-student" data-node="student"><span>الطالبة</span><div class="dot"></div></div>
+        <div class="node n-library" data-node="library"><span>المكتبة</span><div class="dot"></div></div>
+        <div class="node n-lab" data-node="lab"><span>المختبر</span><div class="dot"></div></div>
+      </div>
+      <div class="status-banner" id="statusBanner">أعيدوا نقاط الشبكة إلى الاتصال</div>
+      <div style="margin-top:22px;position:relative;z-index:1;">
+        <button class="btn btn-main" id="btnStartMission" onclick="startMission()">ابدأ مهمة الإنقاذ التالية</button>
+        <button class="btn btn-gold" id="btnGoPassword" style="display:none;" onclick="goPassword()">متابعة إلى كلمة المرور</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. MISSION -->
+  <div class="screen" id="scr-mission">
+    <div class="panel tone-neutral">
+      <div class="panel-ring r1"></div><div class="panel-ring r2"></div><div class="panel-ring r3"></div><div class="panel-ring r4"></div>
+      <div class="mission-badge" id="mTitleGold" style="font-size:15px;"></div>
+      <div class="panel-title gold" id="mScenario" style="font-size:30px;margin-top:2px;"></div>
+      <div class="q-prompt">أيُّ تصرّف يحمي التعليم؟</div>
+      <div class="opt-row" id="mOptions"></div>
+      <div class="pw-reveal" id="mPwReveal"></div>
+      <div class="hint-msg" id="mHint"></div>
+      <div class="next-wrap">
+        <button class="btn btn-gold" id="btnMissionNext" style="display:none;" onclick="afterMission()">متابعة ←</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. PASSWORD -->
+  <div class="screen" id="scr-password">
+    <div class="panel tone-gold">
+      <div class="panel-ring r1"></div><div class="panel-ring r2"></div><div class="panel-ring r3"></div><div class="panel-ring r4"></div>
+      <div class="panel-title gold">كلمة المرور الوطنية</div>
+      <div class="panel-sub">بقيت نقطة المستقبل خارج الشبكة<br>اختاري كلمة المرور التي تعبّر عن هويتنا الوطنية</div>
+      <div class="opt-row three">
+        <button class="opt-btn" onclick="checkPassword(this,false)">المال</button>
+        <button class="opt-btn" onclick="checkPassword(this,false)">الشهرة</button>
+        <button class="opt-btn" onclick="checkPassword(this,true)">خدمة الوطن</button>
+      </div>
+      <div class="hint-msg" id="pwHint"></div>
+    </div>
+  </div>
+
+  <!-- 6. SECURE -->
+  <div class="screen" id="scr-secure">
+    <div class="panel tone-green">
+      <div class="panel-ring r1"></div><div class="panel-ring r2"></div><div class="panel-ring r3"></div><div class="panel-ring r4"></div>
+      <div class="icon-badge i-green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#22c96f" stroke-width="2.5"><path d="M4 12l5 5L20 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="panel-title white">تم تأمين شبكة التعليم بنجاح</div>
+      <div class="panel-sub" style="color:#a8ffcf;font-weight:800;">كلمة المرور: خدمة الوطن</div>
+      <button class="btn btn-main" onclick="go2040()">التالي ←</button>
+    </div>
+  </div>
+
+  <!-- 7. 2040 MESSAGE -->
+  <div class="screen" id="scr-2040">
+    <div class="panel tone-cyan">
+      <div class="panel-ring r1"></div><div class="panel-ring r2"></div><div class="panel-ring r3"></div><div class="panel-ring r4"></div>
+      <div class="icon-badge i-cyan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#3fd4ec" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1" fill="#3fd4ec"/><circle cx="15" cy="10" r="1" fill="#3fd4ec"/><path d="M8.5 14.5c1 1.3 2.2 2 3.5 2s2.5-.7 3.5-2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="panel-title white">شكرًا لأنكن حميتنّ التعليم من أجلنا</div>
+      <div class="panel-sub">رسالة من طالبات قطر في المستقبل</div>
+      <button class="btn btn-main" onclick="goClosing()">متابعة ←</button>
+    </div>
+  </div>
+
+  <!-- 8. CLOSING -->
+  <div class="screen" id="scr-closing">
+    <div class="panel tone-neutral">
+      <div class="panel-ring r1"></div><div class="panel-ring r2"></div><div class="panel-ring r3"></div><div class="panel-ring r4"></div>
+      <div class="panel-title white" style="font-size:22px;">قد تنقطع شبكات الاتصال...</div>
+      <div class="panel-title gold" style="font-size:clamp(22px,3.4vw,32px);margin-top:2px;">لكن شبكة العلم يجب ألّا تنقطع أبدًا</div>
+      <div class="values-recap">
+        <span class="value-chip">الاحترام</span>
+        <span class="value-chip">المسؤولية</span>
+        <span class="value-chip">العدالة</span>
+        <span class="value-chip">السلام</span>
+        <span class="value-chip">التعلّم</span>
+      </div>
+      <div class="footer-line" style="margin-top:26px;">
+        <span>نحمي التعليم</span><span class="dotsep"></span><span>نخدم الوطن</span><span class="dotsep"></span><span>نرفع راية قطر</span>
+      </div>
+      <button class="btn btn-ghost" style="margin-top:28px;" onclick="restartAll()">إعادة التشغيل لطابور جديد</button>
+    </div>
+  </div>
+
+</div></div>
+
+<script>
+/* ================= AUDIO ================= */
+const AudioCtxC = window.AudioContext || window.webkitAudioContext;
+let actx;
+function ctx(){ if(!actx) actx = new AudioCtxC(); return actx; }
+function tone(freq,start,dur,type,peak,c){
+  const o=c.createOscillator(), g=c.createGain();
+  o.connect(g); g.connect(c.destination);
+  o.type=type; o.frequency.setValueAtTime(freq,start);
+  g.gain.setValueAtTime(0.0001,start);
+  g.gain.exponentialRampToValueAtTime(peak,start+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,start+dur);
+  o.start(start); o.stop(start+dur+0.02);
+  return o;
+}
+function playClick(){ try{ const c=ctx(); tone(720,c.currentTime,0.07,'sine',0.14,c); }catch(e){} }
+function playCorrect(){ try{
+  const c=ctx();
+  [523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,c.currentTime+i*0.1,0.3,'sine',0.24,c));
+}catch(e){} }
+function playWrong(){ try{
+  const c=ctx(), o=c.createOscillator(), g=c.createGain();
+  o.connect(g); g.connect(c.destination); o.type='sawtooth';
+  o.frequency.setValueAtTime(300,c.currentTime);
+  o.frequency.exponentialRampToValueAtTime(85,c.currentTime+0.32);
+  g.gain.setValueAtTime(0.2,c.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+0.36);
+  o.start(); o.stop(c.currentTime+0.4);
+}catch(e){} }
+function playAlarm(){ try{
+  const c=ctx(); const t0=c.currentTime;
+  for(let i=0;i<4;i++){
+    const o=c.createOscillator(), g=c.createGain();
+    o.connect(g); g.connect(c.destination); o.type='sine';
+    const st=t0+i*0.78;
+    o.frequency.setValueAtTime(480,st);
+    o.frequency.linearRampToValueAtTime(880,st+0.35);
+    o.frequency.linearRampToValueAtTime(480,st+0.7);
+    g.gain.setValueAtTime(0.0001,st);
+    g.gain.exponentialRampToValueAtTime(0.22,st+0.1);
+    g.gain.exponentialRampToValueAtTime(0.0001,st+0.7);
+    o.start(st); o.stop(st+0.75);
+  }
+}catch(e){} }
+function playPing(){ try{
+  const c=ctx();
+  tone(660,c.currentTime,0.12,'sine',0.2,c);
+  tone(990,c.currentTime+0.1,0.16,'sine',0.2,c);
+}catch(e){} }
+function playSecure(){ try{
+  const c=ctx(); const t0=c.currentTime;
+  [523.25,659.25,783.99].forEach((f,i)=>tone(f,t0+i*0.14,0.5,'triangle',0.2,c));
+  const o=c.createOscillator(), g=c.createGain();
+  o.connect(g); g.connect(c.destination); o.type='sine'; o.frequency.value=1046.5;
+  g.gain.setValueAtTime(0.0001,t0+0.42);
+  g.gain.exponentialRampToValueAtTime(0.26,t0+0.48);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+1.3);
+  o.start(t0+0.42); o.stop(t0+1.35);
+}catch(e){} }
+
+/* ================= STATE ================= */
+const missions=[
+  {node:'student', scenario:'التنمّر', tag:'مهمة الإنقاذ 1 من 5', wrong:'الصمت', correct:'الإبلاغ', pw:'الاحترام'},
+  {node:'school',  scenario:'تخريب ممتلكات المدرسة', tag:'مهمة الإنقاذ 2 من 5', wrong:'التجاهل', correct:'المسؤولية', pw:'المسؤولية'},
+  {node:'library', scenario:'حرمان طفل من الدراسة', tag:'مهمة الإنقاذ 3 من 5', wrong:'القبول', correct:'الدفاع عن حقه', pw:'العدالة'},
+  {node:'lab',     scenario:'الخلاف والعنف', tag:'مهمة الإنقاذ 4 من 5', wrong:'التصعيد', correct:'الحوار', pw:'السلام'},
+  {node:'teacher', scenario:'الخوف على مستقبل الوطن', tag:'مهمة الإنقاذ 5 من 5', wrong:'الاستسلام', correct:'مواصلة التعلّم', pw:'التعلّم'}
+];
+let nodes={school:false,teacher:false,student:false,library:false,lab:false};
+let missionIdx=0;
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function setTopStatus(label,cls){
+  const pill=document.getElementById('topStatus');
+  pill.className='status-pill '+cls;
+  const dot=pill.querySelector('.status-dot');
+  dot.className='status-dot '+(cls==='st-action'||cls==='st-locked'?'':'pulse');
+  document.getElementById('topStatusLabel').textContent=label;
+  document.getElementById('topTitle').textContent=
+    cls==='st-offline'?'تحذير أمني':
+    cls==='st-action'?'مهمة الإنقاذ':
+    cls==='st-locked'?'كلمة المرور الوطنية':
+    cls==='st-secure'?'شبكة التعليم القطرية':
+    cls==='st-2040'?'اتصال وارد من المستقبل':
+    'شبكة التعليم';
+}
+
+/* ---- 1 -> 2 ---- */
+function goAlert(){
+  playClick();
+  showScreen('scr-alert');
+  setTopStatus('OFFLINE','st-offline');
+  setTimeout(playAlarm,150);
+}
+/* ---- 2 -> 3 ---- */
+function goStatus(){
+  playClick();
+  showScreen('scr-status');
+  setTopStatus('0/5','st-locked');
+  renderStatus();
+}
+function countConnected(){ return Object.values(nodes).filter(Boolean).length; }
+function renderStatus(){
+  const n=countConnected();
+  document.getElementById('netCounter').textContent=n+' / 5';
+  setTopStatus(n+'/5', n>=5?'st-secure':'st-locked');
+  Object.keys(nodes).forEach(k=>{
+    const el=document.querySelector('.node[data-node="'+k+'"]');
+    el.classList.toggle('connected',nodes[k]);
+  });
+  const banner=document.getElementById('statusBanner');
+  const btnStart=document.getElementById('btnStartMission');
+  const btnPw=document.getElementById('btnGoPassword');
+  if(n>=5){
+    banner.textContent='تم استعادة جميع نقاط الشبكة!';
+    banner.classList.add('ok');
+    btnStart.style.display='none';
+    btnPw.style.display='inline-block';
+  }else{
+    banner.textContent='أعيدوا نقاط الشبكة إلى الاتصال';
+    banner.classList.remove('ok');
+    btnStart.style.display='inline-block';
+    btnPw.style.display='none';
+    btnStart.textContent = n===0 ? 'ابدأ مهمة الإنقاذ التالية' : 'تابعوا مهمة الإنقاذ التالية';
+  }
+}
+
+/* ---- 3 -> 4 ---- */
+function startMission(){
+  playClick();
+  renderMission(missionIdx);
+  showScreen('scr-mission');
+  setTopStatus('ACTION','st-action');
+}
+function renderMission(i){
+  const m=missions[i];
+  document.getElementById('mTitleGold').textContent=m.tag;
+  document.getElementById('mScenario').textContent=m.scenario;
+  document.getElementById('mPwReveal').className='pw-reveal';
+  document.getElementById('mPwReveal').textContent='';
+  document.getElementById('mHint').textContent='';
+  document.getElementById('mHint').className='hint-msg';
+  document.getElementById('btnMissionNext').style.display='none';
+  const wrap=document.getElementById('mOptions');
+  wrap.innerHTML='';
+  const opts=[{label:m.wrong,ok:false},{label:m.correct,ok:true}];
+  opts.forEach(o=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';
+    b.textContent=o.label;
+    b.onclick=()=>answerMission(b,o.ok,m);
+    wrap.appendChild(b);
+  });
+}
+function answerMission(btn,isCorrect,m){
+  if(btn.disabled)return;
+  const allBtns=document.querySelectorAll('#mOptions .opt-btn');
+  if(isCorrect){
+    allBtns.forEach(b=>b.disabled=true);
+    btn.classList.add('is-correct');
+    playCorrect();
+    const rev=document.getElementById('mPwReveal');
+    rev.textContent='كلمة الحماية: '+m.pw;
+    requestAnimationFrame(()=>rev.classList.add('show'));
+    document.getElementById('mHint').textContent='';
+    nodes[m.node]=true;
+    document.getElementById('btnMissionNext').style.display='inline-block';
+  }else{
+    btn.classList.add('is-wrong','shaking');
+    playWrong();
+    document.getElementById('mHint').className='hint-msg err';
+    document.getElementById('mHint').textContent='حاولي مرة أخرى، فكّري في التصرّف الذي يحمي التعليم';
+    setTimeout(()=>{ btn.classList.remove('shaking'); },420);
+  }
+}
+function afterMission(){
+  playClick();
+  missionIdx++;
+  showScreen('scr-status');
+  const n=countConnected();
+  setTopStatus(n+'/5', n>=5?'st-secure':'st-locked');
+  renderStatus();
+  // pulse the just-connected node
+  const lastM=missions[missionIdx-1];
+  const el=document.querySelector('.node[data-node="'+lastM.node+'"]');
+  if(el){ el.classList.add('just-connected'); playPing(); setTimeout(()=>el.classList.remove('just-connected'),600); }
+}
+
+/* ---- 3 -> 5 ---- */
+function goPassword(){
+  playClick();
+  showScreen('scr-password');
+  setTopStatus('LOCKED','st-locked');
+  document.querySelectorAll('#scr-password .opt-btn').forEach(b=>{b.disabled=false;b.classList.remove('is-correct','is-wrong','shaking');});
+  document.getElementById('pwHint').textContent='';
+}
+function checkPassword(btn,isCorrect){
+  if(isCorrect){
+    document.querySelectorAll('#scr-password .opt-btn').forEach(b=>b.disabled=true);
+    btn.classList.add('is-correct');
+    playSecure();
+    launchConfetti();
+    setTimeout(goSecure,900);
+  }else{
+    btn.classList.add('is-wrong','shaking');
+    playWrong();
+    document.getElementById('pwHint').className='hint-msg err';
+    document.getElementById('pwHint').textContent='هذه ليست كلمة المرور الوطنية، حاولي مرة أخرى';
+    setTimeout(()=>btn.classList.remove('shaking'),420);
+  }
+}
+
+/* ---- 5 -> 6 -> 7 -> 8 ---- */
+function goSecure(){ showScreen('scr-secure'); setTopStatus('SECURE','st-secure'); }
+function go2040(){ playClick(); showScreen('scr-2040'); setTopStatus('2040','st-2040'); }
+function goClosing(){ playClick(); showScreen('scr-closing'); setTopStatus('ONLINE','st-online'); }
+
+function restartAll(){
+  playClick();
+  nodes={school:false,teacher:false,student:false,library:false,lab:false};
+  missionIdx=0;
+  showScreen('scr-boot');
+  setTopStatus('ONLINE','st-online');
+}
+
+/* ================= CONFETTI ================= */
+const canvas=document.getElementById('confetti');
+const cctx=canvas.getContext('2d');
+function resizeCanvas(){canvas.width=innerWidth;canvas.height=innerHeight;}
+resizeCanvas(); window.addEventListener('resize',resizeCanvas);
+function launchConfetti(){
+  const cols=['#e8b04b','#22c96f','#8a1538','#f4efe4','#3fd4ec'];
+  const parts=Array.from({length:110},()=>({
+    x:Math.random()*canvas.width, y:-20-Math.random()*canvas.height*0.3,
+    r:4+Math.random()*5, c:cols[Math.floor(Math.random()*cols.length)],
+    vy:2+Math.random()*3, vx:-1.5+Math.random()*3, rot:Math.random()*360, vr:-6+Math.random()*12
+  }));
+  let frame=0;
+  function loop(){
+    frame++;
+    cctx.clearRect(0,0,canvas.width,canvas.height);
+    parts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      cctx.save(); cctx.translate(p.x,p.y); cctx.rotate(p.rot*Math.PI/180);
+      cctx.fillStyle=p.c; cctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);
+      cctx.restore();
+    });
+    if(frame<160) requestAnimationFrame(loop); else cctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  loop();
+}
+
+/* ================= DECOR ================= */
+(function(){
+  const wrap=document.getElementById('stars');
+  for(let i=0;i<40;i++){
+    const s=document.createElement('div'); s.className='star';
+    const sz=Math.random()*2.4+1;
+    s.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;animation-delay:'+(Math.random()*4)+'s;';
+    wrap.appendChild(s);
+  }
+})();
+
+setTopStatus('ONLINE','st-online');
+</script>
+</body>
+</html>
